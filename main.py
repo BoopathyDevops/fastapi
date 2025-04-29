@@ -6,7 +6,7 @@ print("Hello, World!")
 
 @app.get("/")
 def read_root():
-    return {"message": "The GitHub Action ran successfully, and CI/CD has been implemented."}
+    return {"message": "Render ran successfully, and CI/CD has been implemented."}
 
 @app.get("/api")
 def read_root():
