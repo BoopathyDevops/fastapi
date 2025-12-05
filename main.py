@@ -11,15 +11,37 @@
 # @app.get("/api")
 # def read_root():
 #     return {"message": "The jenkins ran successfully, and CI/CD has been implemented."}
+# from fastapi import FastAPI
+# from azure.functions import HttpRequest, HttpResponse
+# from fastapi.responses import JSONResponse
+# import azure.functions as func
+# from fastapi.middleware.cors import CORSMiddleware
+# from mangum import Mangum
+
+# app = FastAPI()
+# handler = Mangum(app)  # makes FastAPI compatible
+
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"]
+# )
+
+# @app.get("/api")
+# def root():
+#     return {"message": "FastAPI running in Azure Function serverless"}
+
+# def main(req: HttpRequest) -> HttpResponse:
+#     response = handler({"body": req.get_body(), "method": req.method, "path": req.url.path}, {})
+#     return JSONResponse(response["body"])
+# main.py
 from fastapi import FastAPI
-from azure.functions import HttpRequest, HttpResponse
-from fastapi.responses import JSONResponse
-import azure.functions as func
 from fastapi.middleware.cors import CORSMiddleware
-from mangum import Mangum
+from azure_functions_fastapi import AzureFunctionsFastAPI
 
 app = FastAPI()
-handler = Mangum(app)  # makes FastAPI compatible
 
 app.add_middleware(
     CORSMiddleware,
@@ -33,6 +55,5 @@ app.add_middleware(
 def root():
     return {"message": "FastAPI running in Azure Function serverless"}
 
-def main(req: HttpRequest) -> HttpResponse:
-    response = handler({"body": req.get_body(), "method": req.method, "path": req.url.path}, {})
-    return JSONResponse(response["body"])
+# Wrap FastAPI app for Azure Function
+main = AzureFunctionsFastAPI(app)
