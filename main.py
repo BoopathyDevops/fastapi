@@ -1,13 +1,38 @@
+# from fastapi import FastAPI
+
+# app = FastAPI()
+# print("Hello, World!")
+
+
+# @app.get("/")
+# def read_root():
+#     return {"message": "Render ran successfully, and CI/CD has been implemented."}
+
+# @app.get("/api")
+# def read_root():
+#     return {"message": "The jenkins ran successfully, and CI/CD has been implemented."}
 from fastapi import FastAPI
+from azure.functions import HttpRequest, HttpResponse
+from fastapi.responses import JSONResponse
+import azure.functions as func
+from fastapi.middleware.cors import CORSMiddleware
+from mangum import Mangum
 
 app = FastAPI()
-print("Hello, World!")
+handler = Mangum(app)  # makes FastAPI compatible
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 @app.get("/")
-def read_root():
-    return {"message": "Render ran successfully, and CI/CD has been implemented."}
+def root():
+    return {"message": "FastAPI running in Azure Function serverless"}
 
-@app.get("/api")
-def read_root():
-    return {"message": "The jenkins ran successfully, and CI/CD has been implemented."}
+def main(req: HttpRequest) -> HttpResponse:
+    response = handler({"body": req.get_body(), "method": req.method, "path": req.url.path}, {})
+    return JSONResponse(response["body"])
