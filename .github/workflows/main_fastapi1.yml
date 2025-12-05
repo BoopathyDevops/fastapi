@@ -7,7 +7,7 @@ name: Build and deploy Python app to Azure Web App - fastapi1
 on:
   push:
     branches:
-      - main
+      - main1
   workflow_dispatch:
 
 jobs:
@@ -58,4 +58,5 @@ jobs:
         with:
           app-name: 'fastapi1'
           slot-name: 'Production'
+
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_DC9127B10C154FF5AB632B0149679C61 }}
