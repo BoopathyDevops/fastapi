@@ -37,23 +37,42 @@
 #     response = handler({"body": req.get_body(), "method": req.method, "path": req.url.path}, {})
 #     return JSONResponse(response["body"])
 # main.py
+# from fastapi import FastAPI
+# from fastapi.middleware.cors import CORSMiddleware
+# from azure_functions_fastapi import AzureFunctionsFastAPI
+
+# app = FastAPI()
+
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"]
+# )
+
+# @app.get("/api")
+# def root():
+#     return {"message": "FastAPI running in Azure Function serverless"}
+
+# # Wrap FastAPI app for Azure Function
+# main = AzureFunctionsFastAPI(app)
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from azure_functions_fastapi import AzureFunctionsFastAPI
+from fastapi.responses import JSONResponse
+import azure.functions as func
 
 app = FastAPI()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"]
-)
 
 @app.get("/api")
 def root():
     return {"message": "FastAPI running in Azure Function serverless"}
 
-# Wrap FastAPI app for Azure Function
-main = AzureFunctionsFastAPI(app)
+def main(req: func.HttpRequest) -> func.HttpResponse:
+    # Simple routing for /api
+    if req.method == "GET" and req.url.path.endswith("/api"):
+        return func.HttpResponse(
+            content='{"message": "FastAPI running"}',
+            status_code=200,
+            mimetype="application/json"
+        )
+    return func.HttpResponse("Not Found", status_code=404)
