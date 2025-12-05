@@ -29,7 +29,7 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-@app.get("/")
+@app.get("/api")
 def root():
     return {"message": "FastAPI running in Azure Function serverless"}
 
